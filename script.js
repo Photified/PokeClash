@@ -108,7 +108,6 @@ function seedFakeStats(card, db) {
         targetWinRate = Math.random() * (0.85 - 0.70) + 0.70; // 70% to 85%
     }
     // RULE 5: The "Original 151" God-Tier Bulk (Base Set & modern 151 set)
-    // A Base Set Pikachu or 151 Bulbasaur will absolutely crush a modern bulk card
     else if (isOriginal151) {
         targetWinRate = Math.random() * (0.85 - 0.60) + 0.60; // 60% to 85%
     }

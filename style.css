@@ -3,8 +3,8 @@ html, body {
   background: #050505; 
   margin: 0; padding: 0; 
   width: 100vw; 
-  height: 100vh; /* Fallback for older browsers */
-  height: 100dvh; /* Dynamic height to respect mobile URL/Nav bars */
+  height: 100vh; 
+  height: 100dvh; 
   overflow: hidden; 
   position: fixed; 
   font-family: 'Segoe UI', Tahoma, sans-serif; 
@@ -34,18 +34,8 @@ html, body {
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); 
 }
 
-.header-actions { 
-  position: absolute; 
-  right: 20px; 
-}
-
-#settings-icon {
-  font-size: 24px;
-  cursor: pointer;
-  opacity: 0.8;
-  transition: all 0.2s ease;
-  padding: 10px;
-}
+.header-actions { position: absolute; right: 20px; }
+#settings-icon { font-size: 24px; cursor: pointer; opacity: 0.8; transition: all 0.2s ease; padding: 10px; }
 #settings-icon:hover { opacity: 1; transform: rotate(90deg); }
 
 /* Main Wrapper */
@@ -53,8 +43,8 @@ html, body {
   display: flex; 
   width: 100vw; 
   height: 100vh; 
-  height: 100dvh; /* Dynamic height */
-  padding-top: 70px; /* Offsets the wrapper so it starts BELOW the header */
+  height: 100dvh; 
+  padding-top: 70px; 
   box-sizing: border-box;
   position: relative;
 }
@@ -69,22 +59,15 @@ html, body {
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease;
-  padding: 15px; /* Adds breathing room around the edges */
+  padding: 15px; 
   box-sizing: border-box;
 }
 
 /* Background Blur Effect */
 .bg-blur {
-  position: absolute;
-  top: -20%; left: -20%;
-  width: 140%; height: 140%;
-  z-index: -1;
-  background-size: cover;
-  background-position: center;
-  filter: blur(25px) brightness(0.3);
-  transform: rotate(-5deg) scale(1.1);
-  transition: background-image 0.5s ease;
-  pointer-events: none;
+  position: absolute; top: -20%; left: -20%; width: 140%; height: 140%; z-index: -1;
+  background-size: cover; background-position: center; filter: blur(25px) brightness(0.3);
+  transform: rotate(-5deg) scale(1.1); transition: background-image 0.5s ease; pointer-events: none;
 }
 
 @media (hover: hover) {
@@ -92,20 +75,47 @@ html, body {
   .split-side:hover .card-img { transform: scale(1.03) translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 }
 
-/* Card Container */
-.card-wrapper { display: flex; flex-direction: column; align-items: center; z-index: 10; width: 95%; max-width: 400px; }
-.card-img { max-height: 55vh; width: auto; max-width: 100%; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+/* Card Container - Horizontal Layout */
+.card-wrapper { 
+  display: flex; 
+  flex-direction: row; 
+  align-items: stretch; /* Forces the info-box to stretch to match the image height */
+  justify-content: center;
+  gap: 15px;
+  z-index: 10; 
+  width: 95%; 
+  max-width: 600px; 
+}
 
-/* Modal-Style Info Box */
+/* Desktop Symmetry Mirroring */
+@media (min-width: 769px) {
+  #right-side .card-wrapper {
+    flex-direction: row-reverse; /* Puts the Right Player's Info Box on the outside edge! */
+  }
+}
+
+.card-img { 
+  max-height: 55vh; 
+  width: auto; 
+  max-width: 50%; /* Prevents image from crushing the info box */
+  object-fit: contain;
+  border-radius: 12px; 
+  box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+/* Side-by-Side Modal Info Box */
 .info-box {
-  margin-top: 20px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Vertically centers the text inside the stretched box */
+  flex: 1; /* Takes up the remaining horizontal width */
   text-align: center; 
   background: #111; 
   padding: 15px; 
   border-radius: 12px; 
   border: 1px solid #333; 
   border-top: 4px solid #c70000; 
-  width: 100%; 
   box-sizing: border-box;
   box-shadow: 0 15px 35px rgba(0,0,0,0.8);
 }
@@ -119,17 +129,8 @@ html, body {
 
 /* Button-Style Win Percent */
 .win-percent { 
-  background: #222; 
-  color: white; 
-  border: 1px solid #444; 
-  padding: 10px; 
-  border-radius: 6px; 
-  font-weight: bold; 
-  width: 100%; 
-  box-sizing: border-box; 
-  font-size: 16px; 
-  letter-spacing: 1px; 
-  transition: all 0.3s ease;
+  background: #222; color: white; border: 1px solid #444; padding: 10px; border-radius: 6px; 
+  font-weight: bold; width: 100%; box-sizing: border-box; font-size: 16px; letter-spacing: 1px; transition: all 0.3s ease;
 }
 
 /* VS Badge */
@@ -145,8 +146,7 @@ html, body {
 
 .winner .win-percent {
   background: linear-gradient(135deg, #c70000, #ff4d4d);
-  border: none;
-  box-shadow: 0 4px 15px rgba(199, 0, 0, 0.4);
+  border: none; box-shadow: 0 4px 15px rgba(199, 0, 0, 0.4);
 }
 
 /* Modals */
@@ -160,7 +160,6 @@ html, body {
 .modal-btn:hover { background: #333; }
 .modal-btn.primary { background: linear-gradient(135deg, #c70000, #ff4d4d); border: none; }
 .modal-btn.primary:hover { filter: brightness(1.2); }
-
 @media (display-mode: standalone) { #install-app-btn { display: none !important; } }
 
 /* ---------------------------------
@@ -169,41 +168,35 @@ html, body {
 @media (max-width: 768px) {
   #app-wrapper { 
     flex-direction: column; 
-    padding-top: 60px; /* Slightly shorter header offset for mobile */
+    padding-top: 60px; 
   }
   
-  #main-header { height: 60px; } /* Shrink header to save vertical space */
-  .logo-img { max-height: 35px; } /* Shrink logo to match header */
+  #main-header { height: 60px; } 
+  .logo-img { max-height: 35px; } 
 
-  .split-side { 
-    padding: 10px; /* Tighter padding on mobile edges */
-  } 
+  .split-side { padding: 10px; } 
   
+  .card-wrapper { 
+    gap: 12px; 
+    max-width: 100%; /* Utilize full width available */
+  }
+
   .card-img { 
-    max-height: 22dvh; /* Force cards to scale down to fit info boxes and toolbars */
+    max-height: 38dvh; /* Huge vertical space gained by moving info box! */
+    max-width: 50%; /* Keeps it from crushing the text box */
   }
   
-  .info-box { 
-    margin-top: 10px; 
-    padding: 10px; 
-  }
+  .info-box { padding: 10px; }
   
-  .card-set { font-size: 13px; }
+  .card-set { font-size: 12px; } /* Slightly scaled to prevent text wrapping */
   .card-number { font-size: 10px; }
   
   .stats-box { margin-top: 10px; padding-top: 10px; }
-  .stats-box.reveal { height: 35px; } /* Tighter button container */
+  .stats-box.reveal { height: 35px; } 
   
-  .win-percent { 
-    font-size: 13px; 
-    padding: 8px; 
-  }
+  .win-percent { font-size: 13px; padding: 8px; }
 
   #vs-badge {
-    width: 40px; 
-    height: 40px; 
-    font-size: 16px;
-    /* Keeps it from overlapping mobile content */
-    border-width: 2px;
+    width: 40px; height: 40px; font-size: 16px; border-width: 2px;
   }
 }
