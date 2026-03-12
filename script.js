@@ -225,24 +225,29 @@ function closeInstallInstructions() {
     installInstructionsModal.classList.remove('active');
 }
 
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+        if (installAppBtn) installAppBtn.style.display = 'block'; 
+    }
+});
+
 if (installAppBtn) {
     installAppBtn.addEventListener('click', async () => {
-        if (window.deferredPrompt) {
-            // Show the native browser prompt
-            window.deferredPrompt.prompt();
-            const { outcome } = await window.deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                window.deferredPrompt = null;
-            }
-            settingsModal.classList.remove('active');
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') deferredPrompt = null;
         } else {
-            // Fallback if the browser refuses to show the prompt or prompt is unavailable
             settingsModal.classList.remove('active');
             installInstructionsModal.classList.add('active');
         }
     });
 }
 
+// Hide install button completely if running in standalone PWA mode
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
     if (installAppBtn) installAppBtn.style.display = 'none';
 }
