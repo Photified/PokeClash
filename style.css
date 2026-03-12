@@ -129,7 +129,8 @@ html, body {
 }
 
 /* Winner / Loser Animations */
-.winner .card-img { transform: scale(1.05); box-shadow: 0 10px 40px rgba(199, 0, 0, 0.4); outline: 3px solid #c70000; outline-offset: 4px; }
+/* Scale reduced from 1.05 to 1.02 to prevent collision with the VS badge */
+.winner .card-img { transform: scale(1.02); box-shadow: 0 10px 40px rgba(199, 0, 0, 0.4); outline: 3px solid #c70000; outline-offset: 4px; }
 .loser .card-img { transform: scale(0.95); opacity: 0.6; filter: grayscale(50%); }
 
 .winner .win-percent { background: linear-gradient(135deg, #c70000, #ff4d4d); border: none; box-shadow: 0 4px 15px rgba(199, 0, 0, 0.4); }
@@ -160,36 +161,68 @@ html, body {
   
   #main-header { height: 60px; } 
   .logo-img { max-height: 35px; } 
-  .split-side { padding: 10px; } 
   
-  /* Horizontal Layout for Mobile */
+  .split-side { 
+    padding: 0; /* Remove padding to allow solid column effect */
+    width: 100%;
+    height: 50%;
+  } 
+  
+  /* Horizontal Layout for Mobile: Info on Left, Card on Right */
   .card-wrapper { 
-    flex-direction: row; /* Image on left, Info on right */
-    align-items: center; /* Prevents info box from stretching vertically! */
-    gap: 15px; 
+    flex-direction: row-reverse; /* Puts info box (second HTML element) on the left */
+    align-items: center; 
+    gap: 0; 
     max-width: 100%; 
-    width: 95%;
+    width: 100%;
+    height: 100%;
   }
 
-  /* Card is the Star */
+  /* Right 75%: Centered Card */
   .card-img { 
-    flex: 0 0 55%; /* Forces card to take up 55% of the row width */
-    max-width: 55%;
-    max-height: 40dvh; /* Bounded height so it never escapes the screen */
+    flex: 0 0 75%; 
+    width: 75%;
+    height: 100%;
+    max-height: 100%; 
+    padding: 15px;
+    box-sizing: border-box;
+    object-fit: contain; /* Centers image inside the flex container automatically */
   }
   
-  /* Compact Info Box */
+  /* Left 25%: Solid Column Info Box */
   .info-box { 
-    flex: 1; /* Takes the remaining 45% of width */
+    flex: 0 0 25%; 
+    width: 25%;
+    height: 100%;
     margin-top: 0; 
-    padding: 10px; 
+    padding: 10px 4px; 
+    border-radius: 0; /* Removes floating look */
+    border: none;
+    border-right: 1px solid rgba(255,255,255,0.1); /* Separator */
+    border-left: 3px solid #c70000; /* Subtle branding line */
+    background: #0a0a0a; /* Dark background to merge boxes into one visual column */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: none;
   }
   
-  .card-set { font-size: 12px; } 
-  .card-number { font-size: 10px; }
-  .stats-box { margin-top: 10px; padding-top: 10px; }
-  .stats-box.reveal { height: 35px; } 
-  .win-percent { font-size: 13px; padding: 6px; }
+  /* Divider line between the top and bottom left column items */
+  #left-side .info-box { border-bottom: 1px solid rgba(255,255,255,0.1); }
+  
+  .card-set { font-size: 11px; text-align: center; line-height: 1.2; word-wrap: break-word; margin-bottom: 4px; } 
+  .card-number { font-size: 9px; }
+  .stats-box { margin-top: 8px; padding-top: 8px; width: 100%; }
+  .stats-box.reveal { height: auto; } 
+  .win-percent { font-size: 10px; padding: 6px 2px; width: 100%; text-align: center; }
 
-  #vs-badge { width: 40px; height: 40px; font-size: 16px; border-width: 2px; }
+  /* Centered perfectly in the Right 75% space */
+  #vs-badge { 
+    width: 40px; 
+    height: 40px; 
+    font-size: 16px; 
+    border-width: 2px; 
+    left: 62.5%; /* 25% (left) + 37.5% (half of right) */
+  }
 }
