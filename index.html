@@ -6,6 +6,22 @@
   <title>Poke Clash</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
+  
+  <script>
+    // Catch the install prompt globally as early as possible to prevent race conditions
+    window.deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      window.deferredPrompt = e;
+    });
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+      });
+    }
+  </script>
 </head>
 <body>
   
@@ -93,11 +109,6 @@
     </div>
   </div>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-  </script>
   <script src="script.js"></script>
 </body>
 </html>
