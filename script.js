@@ -35,6 +35,7 @@ function initApp() {
     document.getElementById('oracle-toggle').checked = isOracleMode;
     updateStreakUI();
     loadNewMatchup();
+    isVotingLocked = false;
 }
 
 function saveConfig() {
@@ -79,8 +80,6 @@ function getRandomCard() {
 }
 
 function loadNewMatchup() {
-    isVotingLocked = false;
-
     document.getElementById('left-side').classList.remove('winner', 'loser');
     document.getElementById('right-side').classList.remove('winner', 'loser');
     document.getElementById('left-stats').classList.remove('reveal');
@@ -191,8 +190,20 @@ function castVote(chosenSide) {
     updateUIStats('left', db[currentMatch.left.id]);
     updateUIStats('right', db[currentMatch.right.id]);
 
+    // Smooth Crossfade Transition
     setTimeout(() => {
-        loadNewMatchup();
+        const appWrapper = document.getElementById('app-wrapper');
+        appWrapper.style.opacity = '0'; // Fade out
+        
+        setTimeout(() => {
+            loadNewMatchup(); // Swap data while hidden
+            appWrapper.style.opacity = '1'; // Fade back in
+            
+            setTimeout(() => {
+                isVotingLocked = false; // Unlock clicks after fade in
+            }, 300);
+            
+        }, 300); // Wait for fade out to complete
     }, 1500);
 }
 

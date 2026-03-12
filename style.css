@@ -80,6 +80,7 @@ html, body {
   margin-top: 70px; /* Starts exactly below the header */
   box-sizing: border-box;
   position: relative;
+  transition: opacity 0.3s ease; /* Smooth crossfade between matches */
 }
 
 /* Split Screen Layout */
@@ -145,8 +146,15 @@ html, body {
 .card-number { font-size: 12px; color: #aaa; margin-top: 4px; font-weight: bold; letter-spacing: 2px; }
 
 /* Hidden Stats Container */
-.stats-box { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); opacity: 0; height: 0; overflow: hidden; transition: all 0.4s ease; display: flex; align-items: center; justify-content: center; }
-.stats-box.reveal { opacity: 1; height: auto; min-height: 45px; } 
+.stats-box { 
+  margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); 
+  opacity: 0; height: 0; overflow: hidden; 
+  display: flex; align-items: center; justify-content: center; 
+}
+.stats-box.reveal { 
+  opacity: 1; height: auto; min-height: 45px; 
+  transition: all 0.4s ease; /* Animates IN, but instantly snaps OUT */
+} 
 
 /* Button-Style Win Percent stacked layout */
 .win-percent { 
