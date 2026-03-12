@@ -85,18 +85,18 @@ function seedFakeStats(card, db) {
     // Arrays defining the vintage WotC era sets where Holos are at the beginning
     const vintageSets = ['base1', 'base2', 'base3', 'base4', 'base5', 'gym1', 'gym2', 'neo1', 'neo2', 'neo3', 'neo4'];
     
-    // Identify if the card gets the Nostalgia Tax (Vintage or 151)
-    const isNostalgiaSet = vintageSets.includes(set.id) || set.id === 'sv3pt5';
+    // Identify sets that get the massive Original 151 Bump
+    const isOriginal151 = set.id === 'base1' || set.id === 'sv3pt5';
+    const isVintage = vintageSets.includes(set.id);
     
     let targetWinRate;
 
     // RULE 1: Ultimate Chase Cards (SIRs, Golds, Alt Arts)
-    // These are always packed at the very end of modern sets (Top ~6%)
-    if (!vintageSets.includes(set.id) && pureNum >= (set.count * 0.94)) {
+    if (!isVintage && pureNum >= (set.count * 0.94)) {
         targetWinRate = Math.random() * (0.99 - 0.90) + 0.90; // 90% to 99%
     }
     // RULE 2: Vintage Holos (Cards #1 through #16 in early sets)
-    else if (vintageSets.includes(set.id) && pureNum <= 16) {
+    else if (isVintage && pureNum <= 16) {
         targetWinRate = Math.random() * (0.98 - 0.85) + 0.85; // 85% to 98%
     }
     // RULE 3: Trainer Galleries / Galarian Galleries
@@ -104,20 +104,25 @@ function seedFakeStats(card, db) {
         targetWinRate = Math.random() * (0.90 - 0.75) + 0.75; // 75% to 90%
     } 
     // RULE 4: Standard Secret Rares & IRs (Top 15% of modern sets)
-    else if (!vintageSets.includes(set.id) && pureNum >= (set.count * 0.85)) {
+    else if (!isVintage && pureNum >= (set.count * 0.85)) {
         targetWinRate = Math.random() * (0.85 - 0.70) + 0.70; // 70% to 85%
     }
-    // RULE 5: The Nostalgia Bump! (Vintage non-holos and ALL standard 151 cards)
-    else if (isNostalgiaSet) {
-        targetWinRate = Math.random() * (0.75 - 0.45) + 0.45; // 45% to 75%
+    // RULE 5: The "Original 151" God-Tier Bulk (Base Set & modern 151 set)
+    // A Base Set Pikachu or 151 Bulbasaur will absolutely crush a modern bulk card
+    else if (isOriginal151) {
+        targetWinRate = Math.random() * (0.85 - 0.60) + 0.60; // 60% to 85%
     }
-    // RULE 6: Modern Standard Rares / Holos / V / ex 
+    // RULE 6: Standard Vintage Bulk (Jungle, Fossil, Neo, etc.)
+    else if (isVintage) {
+        targetWinRate = Math.random() * (0.70 - 0.50) + 0.50; // 50% to 70%
+    }
+    // RULE 7: Modern Standard Rares / Holos / V / ex 
     else if (pureNum >= (set.count * 0.70)) {
-        targetWinRate = Math.random() * (0.65 - 0.45) + 0.45; // 45% to 65%
+        targetWinRate = Math.random() * (0.60 - 0.40) + 0.40; // 40% to 60%
     } 
-    // RULE 7: Modern Bulk (Commons, Uncommons)
+    // RULE 8: Modern Bulk (Commons, Uncommons)
     else {
-        targetWinRate = Math.random() * (0.40 - 0.15) + 0.15; // 15% to 40%
+        targetWinRate = Math.random() * (0.35 - 0.15) + 0.15; // 15% to 35%
     }
 
     // Generate a believable baseline of matches (between 150 and 350)
