@@ -19,14 +19,14 @@ const ALL_SETS = [
 ];
 
 let currentMatch = { left: null, right: null };
-let isVotingLocked = false; 
+let isVotingLocked = true; // Lock immediately on load
 
 // --- Oracle Mode State ---
 let isOracleMode = false;
 let currentStreak = 0;
 let bestStreak = 0;
 
-function initApp() {
+async function initApp() {
     const savedConfig = JSON.parse(localStorage.getItem('pokeClashConfig')) || { isOracleMode: false, currentStreak: 0, bestStreak: 0 };
     isOracleMode = savedConfig.isOracleMode;
     currentStreak = savedConfig.currentStreak || 0;
@@ -34,7 +34,8 @@ function initApp() {
 
     document.getElementById('oracle-toggle').checked = isOracleMode;
     updateStreakUI();
-    loadNewMatchup();
+    
+    await loadNewMatchup(); // Wait for first cards to load
     isVotingLocked = false;
 }
 
@@ -79,7 +80,8 @@ function getRandomCard() {
     };
 }
 
-function loadNewMatchup() {
+// Now async to support image preloading
+async function loadNewMatchup() {
     document.getElementById('left-side').classList.remove('winner', 'loser');
     document.getElementById('right-side').classList.remove('winner', 'loser');
     document.getElementById('left-stats').classList.remove('reveal');
@@ -92,6 +94,12 @@ function loadNewMatchup() {
     }
 
     currentMatch = { left: card1, right: card2 };
+
+    // THE FIX: Wait for the browser to physically download the images before updating the DOM
+    await Promise.all([
+        new Promise(resolve => { const img = new Image(); img.onload = resolve; img.onerror = resolve; img.src = card1.imageUrl; }),
+        new Promise(resolve => { const img = new Image(); img.onload = resolve; img.onerror = resolve; img.src = card2.imageUrl; })
+    ]);
 
     document.getElementById('left-img').src = card1.imageUrl;
     document.getElementById('left-bg').style.backgroundImage = `url(${card1.imageUrl})`;
@@ -190,17 +198,17 @@ function castVote(chosenSide) {
     updateUIStats('left', db[currentMatch.left.id]);
     updateUIStats('right', db[currentMatch.right.id]);
 
-    // Smooth Crossfade Transition
+    // Preloader Crossfade Logic
     setTimeout(() => {
         const appWrapper = document.getElementById('app-wrapper');
         appWrapper.style.opacity = '0'; // Fade out
         
-        setTimeout(() => {
-            loadNewMatchup(); // Swap data while hidden
-            appWrapper.style.opacity = '1'; // Fade back in
+        setTimeout(async () => {
+            await loadNewMatchup(); // Pause in darkness until new images fully download
+            appWrapper.style.opacity = '1'; // Fade back in with cached images
             
             setTimeout(() => {
-                isVotingLocked = false; // Unlock clicks after fade in
+                isVotingLocked = false; // Unlock clicks
             }, 300);
             
         }, 300); // Wait for fade out to complete
