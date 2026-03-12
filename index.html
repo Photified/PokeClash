@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Poke Clash</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <header id="main-header">
+    <img class="logo-img" src="images/icon-header.png" alt="Poke Clash">
+    <div class="header-actions">
+      <div id="settings-icon" onclick="toggleSettings()">⚙️</div>
+    </div>
+  </header>
+
+  <div id="app-wrapper">
+    <div class="split-side" id="left-side" onclick="castVote('left')">
+      <div class="bg-blur" id="left-bg"></div>
+      <div class="card-wrapper">
+        <img class="card-img" id="left-img" src="">
+        <div class="info-box">
+          <div class="card-set" id="left-set">Loading...</div>
+          <div class="card-number" id="left-number">--</div>
+          <div class="stats-box" id="left-stats">
+            <div class="win-percent" id="left-percent">--%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="vs-badge">VS</div>
+
+    <div class="split-side" id="right-side" onclick="castVote('right')">
+      <div class="bg-blur" id="right-bg"></div>
+      <div class="card-wrapper">
+        <img class="card-img" id="right-img" src="">
+        <div class="info-box">
+          <div class="card-set" id="right-set">Loading...</div>
+          <div class="card-number" id="right-number">--</div>
+          <div class="stats-box" id="right-stats">
+            <div class="win-percent" id="right-percent">--%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>HOW TO PLAY</h3>
+      <p>A true test of taste. Two cards enter, you choose your favorite. Your choices build the ultimate database of the community's top-rated hits.</p>
+      
+      <button id="install-app-btn" class="modal-btn primary">📱 Install App</button>
+      <button class="modal-btn" onclick="toggleSettings()">Close</button>
+    </div>
+  </div>
+
+  <div id="install-instructions-modal" class="modal-overlay">
+    <div class="modal-box" style="border-top-color: #3b82f6;">
+      <h3>Install App</h3>
+      <p>To install Poke Clash to your phone:</p>
+      <p style="font-size: 13px; color: #ddd; background: #222; padding: 10px; border-radius: 6px;">Tap your browser's <strong>Menu</strong> (three dots ⋮ or share icon ⍗) and select<br><br><strong>➕ Add to Home Screen</strong></p>
+      <button class="modal-btn" onclick="closeInstallInstructions()">Got it</button>
+    </div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

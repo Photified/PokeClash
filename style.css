@@ -1,0 +1,168 @@
+/* Strict Mobile Viewport Locking */
+html, body { 
+  background: #050505; 
+  margin: 0; padding: 0; 
+  width: 100vw; height: 100vh; 
+  overflow: hidden; position: fixed; 
+  font-family: 'Segoe UI', Tahoma, sans-serif; 
+  color: white;
+}
+
+/* Header Styles */
+#main-header {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  height: 70px;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+  background: #c70000; 
+  border-bottom: 2px solid #8b0000; 
+  z-index: 2000;
+}
+
+/* Graphic Logo Scaling */
+.logo-img {
+  max-height: 45px; 
+  width: auto;
+  pointer-events: auto;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); 
+}
+
+.header-actions { 
+  position: absolute; 
+  right: 20px; 
+}
+
+#settings-icon {
+  font-size: 24px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+  padding: 10px;
+}
+#settings-icon:hover { opacity: 1; transform: rotate(90deg); }
+
+/* Main Wrapper */
+#app-wrapper { 
+  display: flex; 
+  width: 100vw; height: 100vh; 
+  position: relative;
+}
+
+/* Split Screen Layout */
+.split-side {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  padding-top: 30px; 
+}
+
+/* Background Blur Effect */
+.bg-blur {
+  position: absolute;
+  top: -20%; left: -20%;
+  width: 140%; height: 140%;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  filter: blur(25px) brightness(0.3); /* Darkened from 0.4 */
+  transform: rotate(-5deg) scale(1.1);
+  transition: background-image 0.5s ease;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .split-side:hover .bg-blur { filter: blur(20px) brightness(0.5); } /* Darkened from 0.6 */
+  .split-side:hover .card-img { transform: scale(1.03) translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+}
+
+/* Card Container */
+.card-wrapper { display: flex; flex-direction: column; align-items: center; z-index: 10; width: 90%; max-width: 400px; }
+.card-img { max-height: 55vh; width: auto; max-width: 100%; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+/* Modal-Style Info Box */
+.info-box {
+  margin-top: 20px; 
+  text-align: center; 
+  background: #111; /* Matched to modal */
+  padding: 15px; 
+  border-radius: 12px; 
+  border: 1px solid #333; /* Matched to modal */
+  border-top: 4px solid #c70000; /* Matched to modal */
+  width: 100%; 
+  box-sizing: border-box;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+}
+
+.card-set { font-size: 16px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+.card-number { font-size: 12px; color: #aaa; margin-top: 4px; font-weight: bold; letter-spacing: 2px; }
+
+/* Hidden Stats Container */
+.stats-box { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); opacity: 0; height: 0; overflow: hidden; transition: all 0.4s ease; display: flex; align-items: center; justify-content: center; }
+.stats-box.reveal { opacity: 1; height: 45px; } 
+
+/* Button-Style Win Percent */
+.win-percent { 
+  background: #222; 
+  color: white; 
+  border: 1px solid #444; 
+  padding: 10px; 
+  border-radius: 6px; 
+  font-weight: bold; 
+  width: 100%; 
+  box-sizing: border-box; 
+  font-size: 16px; 
+  letter-spacing: 1px; 
+  transition: all 0.3s ease;
+}
+
+/* VS Badge */
+#vs-badge {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #111; color: white; width: 50px; height: 50px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-style: italic; font-size: 20px;
+  border: 3px solid #333; box-shadow: 0 0 30px rgba(0,0,0,0.8); z-index: 100; pointer-events: none;
+}
+
+/* Winner / Loser Animations */
+.winner .card-img { transform: scale(1.05); box-shadow: 0 10px 40px rgba(199, 0, 0, 0.4); outline: 3px solid #c70000; outline-offset: 4px; }
+.loser .card-img { transform: scale(0.95); opacity: 0.6; filter: grayscale(50%); }
+
+/* Make the Winner's button light up red! */
+.winner .win-percent {
+  background: linear-gradient(135deg, #c70000, #ff4d4d);
+  border: none;
+  box-shadow: 0 4px 15px rgba(199, 0, 0, 0.4);
+}
+
+/* Modals */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-box { background: #111; border: 1px solid #333; border-top: 4px solid #c70000; border-radius: 12px; padding: 25px; width: 300px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,1); transform: translateY(20px) scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
+.modal-box h3 { margin-top: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 18px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+.modal-box p { font-size: 14px; color: #aaa; margin-bottom: 20px; line-height: 1.5; }
+.modal-btn { background: #222; color: white; border: 1px solid #444; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 10px; transition: background 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+.modal-btn:hover { background: #333; }
+.modal-btn.primary { background: linear-gradient(135deg, #c70000, #ff4d4d); border: none; }
+.modal-btn.primary:hover { filter: brightness(1.2); }
+
+@media (display-mode: standalone) { #install-app-btn { display: none !important; } }
+
+/* Mobile Layout */
+@media (max-width: 768px) {
+  #app-wrapper { flex-direction: column; }
+  .split-side { padding-top: 35px; } 
+  .card-img { max-height: 28vh; }
+  .info-box { margin-top: 10px; padding: 10px; }
+  .card-set { font-size: 14px; }
+  .stats-box.reveal { height: 45px; padding-top: 10px; margin-top: 10px;}
+  .win-percent { font-size: 14px; padding: 8px; }
+}
