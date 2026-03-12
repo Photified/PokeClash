@@ -6,14 +6,6 @@
   <title>Poke Clash</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
-  <script>
-    // Catch 1: Snag the prompt the millisecond the `<head>` loads
-    window.earlyPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      window.earlyPrompt = e;
-    });
-  </script>
 </head>
 <body>
   
@@ -103,7 +95,9 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+      });
     }
   </script>
   <script src="script.js"></script>

@@ -105,7 +105,6 @@ function loadNewMatchup() {
     document.getElementById('right-number').innerText = `CARD #${card2.num}`;
 }
 
-// --- Voting Logic ---
 function getStats() {
     return JSON.parse(localStorage.getItem('pokeClashStats')) || {};
 }
@@ -210,24 +209,20 @@ function closeInstallInstructions() {
     installInstructionsModal.classList.remove('active');
 }
 
-// Catch 2: Snag it late just in case the browser was slow
-let latePrompt = null;
+let deferredPrompt;
+
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
-    latePrompt = e;
+    deferredPrompt = e;
 });
 
 if (installAppBtn) {
     installAppBtn.addEventListener('click', async () => {
-        // Use whichever prompt caught the event
-        const finalPrompt = window.earlyPrompt || latePrompt;
-        
-        if (finalPrompt) {
-            finalPrompt.prompt();
-            const { outcome } = await finalPrompt.userChoice;
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
-                window.earlyPrompt = null;
-                latePrompt = null;
+                deferredPrompt = null;
             }
             settingsModal.classList.remove('active');
         } else {

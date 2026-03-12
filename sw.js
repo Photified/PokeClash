@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pokeclash-v2';
+const CACHE_NAME = 'pokeclash-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -8,7 +8,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
-  self.skipWaiting(); // Forces the browser to activate this new v2 immediately
+  self.skipWaiting(); 
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
@@ -18,7 +18,7 @@ self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keyList) => {
       return Promise.all(keyList.map((key) => {
-        if (key !== CACHE_NAME) return caches.delete(key); // Nukes the old cache
+        if (key !== CACHE_NAME) return caches.delete(key); 
       }));
     })
   );
