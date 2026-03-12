@@ -133,7 +133,11 @@ function seedFakeStats(card, db) {
 
 function updateUIStats(side, stats) {
     const winPercent = stats.matches === 0 ? 0 : Math.round((stats.wins / stats.matches) * 100);
-    document.getElementById(`${side}-percent`).innerText = `${winPercent}% WIN RATE`;
+    // Updated HTML structure to support large number on top, label on bottom
+    document.getElementById(`${side}-percent`).innerHTML = `
+        <div class="pct-num">${winPercent}%</div>
+        <div class="pct-lbl">WIN RATE</div>
+    `;
     document.getElementById(`${side}-stats`).classList.add('reveal');
 }
 
