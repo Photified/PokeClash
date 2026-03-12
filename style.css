@@ -178,12 +178,53 @@ html, body {
 .modal-btn.primary:hover { filter: brightness(1.2); }
 @media (display-mode: standalone) { #install-app-btn { display: none !important; } }
 
-/* Settings Toggle Switch (Oracle Mode) */
-.setting-row { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; text-align: left; }
-.setting-text strong { display: block; font-size: 15px; color: #fff; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
-.setting-text span { display: block; font-size: 11px; color: #888; }
+/* =========================================
+   SETTINGS MODAL & TOGGLE SWITCH
+========================================= */
+.setting-row { 
+  display: flex !important; 
+  flex-direction: row !important; 
+  justify-content: space-between; 
+  align-items: center; 
+  background: #1a1a1a; 
+  padding: 12px; 
+  border-radius: 8px; 
+  margin-bottom: 15px; 
+  border: 1px solid #333; 
+  text-align: left; 
+  width: 100%;
+  box-sizing: border-box;
+}
 
-.switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
+.setting-text {
+  flex: 1;
+  padding-right: 15px;
+}
+
+.setting-text strong { 
+  display: block; 
+  font-size: 14px; 
+  color: #fff; 
+  margin-bottom: 4px; 
+  text-transform: uppercase; 
+  letter-spacing: 1px; 
+}
+
+.setting-text span { 
+  display: block; 
+  font-size: 11px; 
+  color: #888; 
+  line-height: 1.3;
+}
+
+/* Custom Slider Toggle */
+.switch { 
+  position: relative; 
+  display: inline-block; 
+  width: 46px; 
+  height: 26px; 
+  flex-shrink: 0; 
+}
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .3s; }
 .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; }
@@ -192,21 +233,33 @@ input:checked + .slider:before { transform: translateX(20px); }
 .slider.round { border-radius: 26px; }
 .slider.round:before { border-radius: 50%; }
 
-#high-score-display { background: #222; padding: 10px; border-radius: 6px; font-weight: bold; margin-bottom: 15px; color: #ffd700; border: 1px solid #444; }
+#high-score-display { 
+  background: #222; 
+  padding: 10px; 
+  border-radius: 6px; 
+  font-weight: bold; 
+  margin-bottom: 15px; 
+  color: #ffd700; 
+  border: 1px solid #444; 
+}
 
-/* ---------------------------------
+/* =========================================
    MOBILE LAYOUT FIXES
---------------------------------- */
+========================================= */
 @media (max-width: 768px) {
   #app-wrapper { 
     flex-direction: column; 
     height: calc(100vh - 60px); 
     height: calc(100dvh - 60px); 
-    margin-top: 60px; /* Shorter header on mobile */
+    margin-top: 60px; 
   }
   
   #main-header { height: 60px; } 
-  .logo-img { max-height: 35px; } 
+  .logo-img { max-height: 28px; } /* Shrink logo slightly to make room for streak */
+  
+  /* Pull header actions in tighter so they don't overflow */
+  .header-actions.left { left: 10px; padding: 4px 8px; font-size: 14px; }
+  .header-actions.right { right: 10px; }
   
   .split-side { 
     padding: 0; 
@@ -214,7 +267,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     height: 50%;
   } 
   
-  /* Horizontal Layout for Mobile: Info on Left, Card on Right */
   .card-wrapper { 
     flex-direction: row-reverse; 
     align-items: center; 
@@ -224,7 +276,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     height: 100%;
   }
 
-  /* Right 75%: Centered Card */
   .card-img { 
     flex: 0 0 75%; 
     width: 75%;
@@ -235,7 +286,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     object-fit: contain; 
   }
   
-  /* Left 25%: Solid Column Info Box */
   .info-box { 
     flex: 0 0 25%; 
     width: 25%;
@@ -253,7 +303,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     box-shadow: none;
   }
   
-  /* Divider line between the top and bottom left column items */
   #left-side .info-box { border-bottom: 1px solid rgba(255,255,255,0.1); }
   
   .card-set { font-size: 11px; text-align: center; line-height: 1.2; word-wrap: break-word; margin-bottom: 4px; } 
@@ -261,12 +310,10 @@ input:checked + .slider:before { transform: translateX(20px); }
   .stats-box { margin-top: 8px; padding-top: 8px; width: 100%; }
   .stats-box.reveal { height: auto; } 
 
-  /* Scaled down stacked percentage for mobile */
   .win-percent { padding: 8px 2px; width: 100%; text-align: center; }
   .pct-num { font-size: 20px; margin-bottom: 1px; }
   .pct-lbl { font-size: 8px; }
 
-  /* Centered perfectly in the Right 75% space */
   #vs-badge { 
     width: 40px; 
     height: 40px; 
