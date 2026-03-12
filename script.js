@@ -27,16 +27,13 @@ let currentStreak = 0;
 let bestStreak = 0;
 
 function initApp() {
-    // Load config from LocalStorage
     const savedConfig = JSON.parse(localStorage.getItem('pokeClashConfig')) || { isOracleMode: false, currentStreak: 0, bestStreak: 0 };
     isOracleMode = savedConfig.isOracleMode;
     currentStreak = savedConfig.currentStreak || 0;
     bestStreak = savedConfig.bestStreak || 0;
 
-    // Set UI states
     document.getElementById('oracle-toggle').checked = isOracleMode;
     updateStreakUI();
-
     loadNewMatchup();
 }
 
@@ -47,7 +44,7 @@ function saveConfig() {
 function toggleOracleMode() {
     isOracleMode = document.getElementById('oracle-toggle').checked;
     if (!isOracleMode) {
-        currentStreak = 0; // Reset streak if they turn it off
+        currentStreak = 0; 
     }
     saveConfig();
     updateStreakUI();
@@ -84,13 +81,11 @@ function getRandomCard() {
 function loadNewMatchup() {
     isVotingLocked = false;
 
-    // Reset UI states
     document.getElementById('left-side').classList.remove('winner', 'loser');
     document.getElementById('right-side').classList.remove('winner', 'loser');
     document.getElementById('left-stats').classList.remove('reveal');
     document.getElementById('right-stats').classList.remove('reveal');
     
-    // Get two unique cards
     let card1 = getRandomCard();
     let card2 = getRandomCard();
     while (card1.id === card2.id) {
@@ -99,13 +94,11 @@ function loadNewMatchup() {
 
     currentMatch = { left: card1, right: card2 };
 
-    // Update Left UI
     document.getElementById('left-img').src = card1.imageUrl;
     document.getElementById('left-bg').style.backgroundImage = `url(${card1.imageUrl})`;
     document.getElementById('left-set').innerText = card1.setName;
     document.getElementById('left-number').innerText = `CARD #${card1.num}`;
 
-    // Update Right UI
     document.getElementById('right-img').src = card2.imageUrl;
     document.getElementById('right-bg').style.backgroundImage = `url(${card2.imageUrl})`;
     document.getElementById('right-set').innerText = card2.setName;
@@ -121,9 +114,8 @@ function saveStats(statsObj) {
     localStorage.setItem('pokeClashStats', JSON.stringify(statsObj));
 }
 
-// Generates a realistic fake history based on actual Pokemon numbering rules & Nostalgia
 function seedFakeStats(card, db) {
-    if (db[card.id]) return; // Already exists, skip
+    if (db[card.id]) return; 
 
     const set = ALL_SETS.find(s => s.id === card.setId);
     const isGalleryCard = !!set.prefix;
@@ -166,20 +158,16 @@ function castVote(chosenSide) {
     const winner = chosenSide === 'left' ? currentMatch.left : currentMatch.right;
     const loser = chosenSide === 'left' ? currentMatch.right : currentMatch.left;
 
-    // Visual feedback
     document.getElementById(`${chosenSide}-side`).classList.add('winner');
     const otherSide = chosenSide === 'left' ? 'right' : 'left';
     document.getElementById(`${otherSide}-side`).classList.add('loser');
 
-    // Update LocalStorage Stats
     let db = getStats();
     
     seedFakeStats(winner, db);
     seedFakeStats(loser, db);
 
-    // --- Oracle Logic Calculation ---
     if (isOracleMode) {
-        // Calculate percentages based on the seeded data before we add the user's current vote
         const chosenWinRate = db[winner.id].matches === 0 ? 0 : (db[winner.id].wins / db[winner.id].matches);
         const unchosenWinRate = db[loser.id].matches === 0 ? 0 : (db[loser.id].wins / db[loser.id].matches);
 
@@ -196,17 +184,14 @@ function castVote(chosenSide) {
         updateStreakUI();
     }
 
-    // Record the actual user vote
     db[winner.id].matches += 1;
     db[winner.id].wins += 1;
     db[loser.id].matches += 1;
     saveStats(db);
 
-    // Reveal stats to user
     updateUIStats('left', db[currentMatch.left.id]);
     updateUIStats('right', db[currentMatch.right.id]);
 
-    // Next match delay
     setTimeout(() => {
         loadNewMatchup();
     }, 1500);
@@ -225,21 +210,26 @@ function closeInstallInstructions() {
     installInstructionsModal.classList.remove('active');
 }
 
-let deferredPrompt;
+// Catch 2: Snag it late just in case the browser was slow
+let latePrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
-    deferredPrompt = e;
-    if (!window.matchMedia('(display-mode: standalone)').matches) {
-        if (installAppBtn) installAppBtn.style.display = 'block'; 
-    }
+    latePrompt = e;
 });
 
 if (installAppBtn) {
     installAppBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') deferredPrompt = null;
+        // Use whichever prompt caught the event
+        const finalPrompt = window.earlyPrompt || latePrompt;
+        
+        if (finalPrompt) {
+            finalPrompt.prompt();
+            const { outcome } = await finalPrompt.userChoice;
+            if (outcome === 'accepted') {
+                window.earlyPrompt = null;
+                latePrompt = null;
+            }
+            settingsModal.classList.remove('active');
         } else {
             settingsModal.classList.remove('active');
             installInstructionsModal.classList.add('active');
@@ -247,10 +237,8 @@ if (installAppBtn) {
     });
 }
 
-// Hide install button completely if running in standalone PWA mode
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
     if (installAppBtn) installAppBtn.style.display = 'none';
 }
 
-// Start game using the new initializer
 window.onload = initApp;
