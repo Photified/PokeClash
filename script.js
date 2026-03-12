@@ -19,7 +19,7 @@ const ALL_SETS = [
 ];
 
 let currentMatch = { left: null, right: null };
-let isVotingLocked = true; // Lock immediately on load
+let isVotingLocked = true; 
 
 // --- Oracle Mode State ---
 let isOracleMode = false;
@@ -35,7 +35,7 @@ async function initApp() {
     document.getElementById('oracle-toggle').checked = isOracleMode;
     updateStreakUI();
     
-    await loadNewMatchup(); // Wait for first cards to load
+    await loadNewMatchup(); 
     isVotingLocked = false;
 }
 
@@ -80,7 +80,6 @@ function getRandomCard() {
     };
 }
 
-// Now async to support image preloading
 async function loadNewMatchup() {
     document.getElementById('left-side').classList.remove('winner', 'loser');
     document.getElementById('right-side').classList.remove('winner', 'loser');
@@ -95,7 +94,6 @@ async function loadNewMatchup() {
 
     currentMatch = { left: card1, right: card2 };
 
-    // THE FIX: Wait for the browser to physically download the images before updating the DOM
     await Promise.all([
         new Promise(resolve => { const img = new Image(); img.onload = resolve; img.onerror = resolve; img.src = card1.imageUrl; }),
         new Promise(resolve => { const img = new Image(); img.onload = resolve; img.onerror = resolve; img.src = card2.imageUrl; })
@@ -198,20 +196,34 @@ function castVote(chosenSide) {
     updateUIStats('left', db[currentMatch.left.id]);
     updateUIStats('right', db[currentMatch.right.id]);
 
-    // Preloader Crossfade Logic
+    // --- The 3D Card Flip & Preload Transition ---
     setTimeout(() => {
-        const appWrapper = document.getElementById('app-wrapper');
-        appWrapper.style.opacity = '0'; // Fade out
+        const leftWrapper = document.querySelector('#left-side .card-wrapper');
+        const rightWrapper = document.querySelector('#right-side .card-wrapper');
+        const leftBg = document.getElementById('left-bg');
+        const rightBg = document.getElementById('right-bg');
+
+        // Trigger 3D Flip Out and Background Fade
+        leftWrapper.classList.add('flip-out');
+        rightWrapper.classList.add('flip-out');
+        leftBg.classList.add('fade-out');
+        rightBg.classList.add('fade-out');
         
         setTimeout(async () => {
-            await loadNewMatchup(); // Pause in darkness until new images fully download
-            appWrapper.style.opacity = '1'; // Fade back in with cached images
+            // Wait while cards are invisible and download new images
+            await loadNewMatchup(); 
+            
+            // Remove classes to trigger the springy Flip In
+            leftWrapper.classList.remove('flip-out');
+            rightWrapper.classList.remove('flip-out');
+            leftBg.classList.remove('fade-out');
+            rightBg.classList.remove('fade-out');
             
             setTimeout(() => {
-                isVotingLocked = false; // Unlock clicks
-            }, 300);
+                isVotingLocked = false; // Unlock clicks after the flip animation settles
+            }, 400); 
             
-        }, 300); // Wait for fade out to complete
+        }, 300); // Give the CSS time to complete the flip-out animation
     }, 1500);
 }
 
