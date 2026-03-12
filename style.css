@@ -19,7 +19,6 @@ html, body {
   display: flex;
   justify-content: center; 
   align-items: center;
-  padding: 0 20px;
   box-sizing: border-box;
   background: #c70000; 
   border-bottom: 2px solid #8b0000; 
@@ -34,9 +33,38 @@ html, body {
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); 
 }
 
-.header-actions { position: absolute; right: 20px; }
-#settings-icon { font-size: 24px; cursor: pointer; opacity: 0.8; transition: all 0.2s ease; padding: 10px; }
-#settings-icon:hover { opacity: 1; transform: rotate(90deg); }
+/* Updated Header Layout for Oracle Mode */
+.header-actions { 
+  position: absolute; 
+  top: 50%; 
+  transform: translateY(-50%); 
+  display: flex; 
+  align-items: center; 
+}
+.header-actions.left { 
+  left: 20px; 
+  background: rgba(0,0,0,0.3); 
+  padding: 4px 12px; 
+  border-radius: 20px; 
+  font-weight: 800; 
+  font-size: 16px; 
+  border: 1px solid rgba(255,255,255,0.1); 
+  letter-spacing: 1px;
+}
+.header-actions.right { 
+  right: 20px; 
+}
+#settings-icon { 
+  font-size: 24px; 
+  cursor: pointer; 
+  opacity: 0.8; 
+  transition: all 0.2s ease; 
+  padding: 10px; 
+}
+#settings-icon:hover { 
+  opacity: 1; 
+  transform: rotate(90deg); 
+}
 
 /* Main Wrapper - EXACT MATH FOR SPLIT SCREEN */
 #app-wrapper { 
@@ -132,8 +160,8 @@ html, body {
 }
 
 /* Winner / Loser Animations */
-.winner .card-img { transform: scale(1.02); box-shadow: 0 10px 40px rgba(199, 0, 0, 0.4); } /* Removed outline that caused layout break */
-.loser .card-img { transform: scale(0.95); opacity: 0.6; filter: grayscale(100%) brightness(35%); } /* Much darker & fully B&W */
+.winner .card-img { transform: scale(1.02); box-shadow: 0 10px 40px rgba(199, 0, 0, 0.4); } 
+.loser .card-img { transform: scale(0.95); opacity: 0.6; filter: grayscale(100%) brightness(35%); } 
 
 .winner .win-percent { background: linear-gradient(135deg, #c70000, #ff4d4d); border: none; box-shadow: 0 4px 15px rgba(199, 0, 0, 0.4); }
 
@@ -149,6 +177,22 @@ html, body {
 .modal-btn.primary { background: linear-gradient(135deg, #c70000, #ff4d4d); border: none; }
 .modal-btn.primary:hover { filter: brightness(1.2); }
 @media (display-mode: standalone) { #install-app-btn { display: none !important; } }
+
+/* Settings Toggle Switch (Oracle Mode) */
+.setting-row { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; text-align: left; }
+.setting-text strong { display: block; font-size: 15px; color: #fff; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
+.setting-text span { display: block; font-size: 11px; color: #888; }
+
+.switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .3s; }
+.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; }
+input:checked + .slider { background-color: #c70000; }
+input:checked + .slider:before { transform: translateX(20px); }
+.slider.round { border-radius: 26px; }
+.slider.round:before { border-radius: 50%; }
+
+#high-score-display { background: #222; padding: 10px; border-radius: 6px; font-weight: bold; margin-bottom: 15px; color: #ffd700; border: 1px solid #444; }
 
 /* ---------------------------------
    MOBILE LAYOUT FIXES
@@ -201,7 +245,6 @@ html, body {
     border-radius: 0; 
     border: none;
     border-right: 1px solid rgba(255,255,255,0.1); 
-    /* border-left: 3px solid #c70000; <- REMOVED */
     background: #0a0a0a; 
     display: flex;
     flex-direction: column;

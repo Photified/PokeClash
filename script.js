@@ -21,6 +21,53 @@ const ALL_SETS = [
 let currentMatch = { left: null, right: null };
 let isVotingLocked = false; 
 
+// --- Oracle Mode State ---
+let isOracleMode = false;
+let currentStreak = 0;
+let bestStreak = 0;
+
+function initApp() {
+    // Load config from LocalStorage
+    const savedConfig = JSON.parse(localStorage.getItem('pokeClashConfig')) || { isOracleMode: false, currentStreak: 0, bestStreak: 0 };
+    isOracleMode = savedConfig.isOracleMode;
+    currentStreak = savedConfig.currentStreak || 0;
+    bestStreak = savedConfig.bestStreak || 0;
+
+    // Set UI states
+    document.getElementById('oracle-toggle').checked = isOracleMode;
+    updateStreakUI();
+
+    loadNewMatchup();
+}
+
+function saveConfig() {
+    localStorage.setItem('pokeClashConfig', JSON.stringify({ isOracleMode, currentStreak, bestStreak }));
+}
+
+function toggleOracleMode() {
+    isOracleMode = document.getElementById('oracle-toggle').checked;
+    if (!isOracleMode) {
+        currentStreak = 0; // Reset streak if they turn it off
+    }
+    saveConfig();
+    updateStreakUI();
+}
+
+function updateStreakUI() {
+    const streakContainer = document.getElementById('streak-container');
+    const highScoreDisplay = document.getElementById('high-score-display');
+
+    if (isOracleMode) {
+        streakContainer.style.display = 'flex';
+        highScoreDisplay.style.display = 'block';
+        document.getElementById('streak-num').innerText = currentStreak;
+        document.getElementById('best-streak-num').innerText = bestStreak;
+    } else {
+        streakContainer.style.display = 'none';
+        highScoreDisplay.style.display = 'none';
+    }
+}
+
 function getRandomCard() {
     const set = ALL_SETS[Math.floor(Math.random() * ALL_SETS.length)];
     const num = Math.floor(Math.random() * set.count) + 1; 
@@ -82,49 +129,21 @@ function seedFakeStats(card, db) {
     const isGalleryCard = !!set.prefix;
     const pureNum = parseInt(card.num.replace(/\D/g, ''));
     
-    // Arrays defining the vintage WotC era sets where Holos are at the beginning
     const vintageSets = ['base1', 'base2', 'base3', 'base4', 'base5', 'gym1', 'gym2', 'neo1', 'neo2', 'neo3', 'neo4'];
-    
-    // Identify sets that get the massive Original 151 Bump
     const isOriginal151 = set.id === 'base1' || set.id === 'sv3pt5';
     const isVintage = vintageSets.includes(set.id);
     
     let targetWinRate;
 
-    // RULE 1: Ultimate Chase Cards (SIRs, Golds, Alt Arts)
-    if (!isVintage && pureNum >= (set.count * 0.94)) {
-        targetWinRate = Math.random() * (0.99 - 0.90) + 0.90; // 90% to 99%
-    }
-    // RULE 2: Vintage Holos (Cards #1 through #16 in early sets)
-    else if (isVintage && pureNum <= 16) {
-        targetWinRate = Math.random() * (0.98 - 0.85) + 0.85; // 85% to 98%
-    }
-    // RULE 3: Trainer Galleries / Galarian Galleries
-    else if (isGalleryCard) {
-        targetWinRate = Math.random() * (0.90 - 0.75) + 0.75; // 75% to 90%
-    } 
-    // RULE 4: Standard Secret Rares & IRs (Top 15% of modern sets)
-    else if (!isVintage && pureNum >= (set.count * 0.85)) {
-        targetWinRate = Math.random() * (0.85 - 0.70) + 0.70; // 70% to 85%
-    }
-    // RULE 5: The "Original 151" God-Tier Bulk (Base Set & modern 151 set)
-    else if (isOriginal151) {
-        targetWinRate = Math.random() * (0.85 - 0.60) + 0.60; // 60% to 85%
-    }
-    // RULE 6: Standard Vintage Bulk (Jungle, Fossil, Neo, etc.)
-    else if (isVintage) {
-        targetWinRate = Math.random() * (0.70 - 0.50) + 0.50; // 50% to 70%
-    }
-    // RULE 7: Modern Standard Rares / Holos / V / ex 
-    else if (pureNum >= (set.count * 0.70)) {
-        targetWinRate = Math.random() * (0.60 - 0.40) + 0.40; // 40% to 60%
-    } 
-    // RULE 8: Modern Bulk (Commons, Uncommons)
-    else {
-        targetWinRate = Math.random() * (0.35 - 0.15) + 0.15; // 15% to 35%
-    }
+    if (!isVintage && pureNum >= (set.count * 0.94)) { targetWinRate = Math.random() * (0.99 - 0.90) + 0.90; }
+    else if (isVintage && pureNum <= 16) { targetWinRate = Math.random() * (0.98 - 0.85) + 0.85; }
+    else if (isGalleryCard) { targetWinRate = Math.random() * (0.90 - 0.75) + 0.75; } 
+    else if (!isVintage && pureNum >= (set.count * 0.85)) { targetWinRate = Math.random() * (0.85 - 0.70) + 0.70; }
+    else if (isOriginal151) { targetWinRate = Math.random() * (0.85 - 0.60) + 0.60; }
+    else if (isVintage) { targetWinRate = Math.random() * (0.70 - 0.50) + 0.50; }
+    else if (pureNum >= (set.count * 0.70)) { targetWinRate = Math.random() * (0.60 - 0.40) + 0.40; } 
+    else { targetWinRate = Math.random() * (0.35 - 0.15) + 0.15; }
 
-    // Generate a believable baseline of matches (between 150 and 350)
     const matches = Math.floor(Math.random() * (350 - 150 + 1)) + 150; 
     const wins = Math.round(matches * targetWinRate);
 
@@ -133,7 +152,6 @@ function seedFakeStats(card, db) {
 
 function updateUIStats(side, stats) {
     const winPercent = stats.matches === 0 ? 0 : Math.round((stats.wins / stats.matches) * 100);
-    // Updated HTML structure to support large number on top, label on bottom
     document.getElementById(`${side}-percent`).innerHTML = `
         <div class="pct-num">${winPercent}%</div>
         <div class="pct-lbl">WIN RATE</div>
@@ -156,9 +174,27 @@ function castVote(chosenSide) {
     // Update LocalStorage Stats
     let db = getStats();
     
-    // Seed realistic data if the card has never been voted on before
     seedFakeStats(winner, db);
     seedFakeStats(loser, db);
+
+    // --- Oracle Logic Calculation ---
+    if (isOracleMode) {
+        // Calculate percentages based on the seeded data before we add the user's current vote
+        const chosenWinRate = db[winner.id].matches === 0 ? 0 : (db[winner.id].wins / db[winner.id].matches);
+        const unchosenWinRate = db[loser.id].matches === 0 ? 0 : (db[loser.id].wins / db[loser.id].matches);
+
+        if (chosenWinRate >= unchosenWinRate) {
+            currentStreak++;
+            if (currentStreak > bestStreak) {
+                bestStreak = currentStreak;
+            }
+        } else {
+            currentStreak = 0;
+        }
+        
+        saveConfig();
+        updateStreakUI();
+    }
 
     // Record the actual user vote
     db[winner.id].matches += 1;
@@ -211,10 +247,9 @@ if (installAppBtn) {
     });
 }
 
-// Hide install button completely if running in standalone PWA mode
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
     if (installAppBtn) installAppBtn.style.display = 'none';
 }
 
-// Start game
-window.onload = loadNewMatchup;
+// Start game using the new initializer
+window.onload = initApp;
