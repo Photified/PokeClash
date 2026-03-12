@@ -1,3 +1,8 @@
+/* Nuke the mobile browser blue tap flash globally */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Strict Mobile Viewport Locking */
 html, body { 
   background: #050505; 
