@@ -2,8 +2,11 @@
 html, body { 
   background: #050505; 
   margin: 0; padding: 0; 
-  width: 100vw; height: 100vh; 
-  overflow: hidden; position: fixed; 
+  width: 100vw; 
+  height: 100vh; /* Fallback for older browsers */
+  height: 100dvh; /* Dynamic height to respect mobile URL/Nav bars */
+  overflow: hidden; 
+  position: fixed; 
   font-family: 'Segoe UI', Tahoma, sans-serif; 
   color: white;
 }
@@ -48,7 +51,11 @@ html, body {
 /* Main Wrapper */
 #app-wrapper { 
   display: flex; 
-  width: 100vw; height: 100vh; 
+  width: 100vw; 
+  height: 100vh; 
+  height: 100dvh; /* Dynamic height */
+  padding-top: 70px; /* Offsets the wrapper so it starts BELOW the header */
+  box-sizing: border-box;
   position: relative;
 }
 
@@ -62,7 +69,8 @@ html, body {
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease;
-  padding-top: 30px; 
+  padding: 15px; /* Adds breathing room around the edges */
+  box-sizing: border-box;
 }
 
 /* Background Blur Effect */
@@ -73,30 +81,30 @@ html, body {
   z-index: -1;
   background-size: cover;
   background-position: center;
-  filter: blur(25px) brightness(0.3); /* Darkened from 0.4 */
+  filter: blur(25px) brightness(0.3);
   transform: rotate(-5deg) scale(1.1);
   transition: background-image 0.5s ease;
   pointer-events: none;
 }
 
 @media (hover: hover) {
-  .split-side:hover .bg-blur { filter: blur(20px) brightness(0.5); } /* Darkened from 0.6 */
+  .split-side:hover .bg-blur { filter: blur(20px) brightness(0.5); } 
   .split-side:hover .card-img { transform: scale(1.03) translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 }
 
 /* Card Container */
-.card-wrapper { display: flex; flex-direction: column; align-items: center; z-index: 10; width: 90%; max-width: 400px; }
+.card-wrapper { display: flex; flex-direction: column; align-items: center; z-index: 10; width: 95%; max-width: 400px; }
 .card-img { max-height: 55vh; width: auto; max-width: 100%; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
 /* Modal-Style Info Box */
 .info-box {
   margin-top: 20px; 
   text-align: center; 
-  background: #111; /* Matched to modal */
+  background: #111; 
   padding: 15px; 
   border-radius: 12px; 
-  border: 1px solid #333; /* Matched to modal */
-  border-top: 4px solid #c70000; /* Matched to modal */
+  border: 1px solid #333; 
+  border-top: 4px solid #c70000; 
   width: 100%; 
   box-sizing: border-box;
   box-shadow: 0 15px 35px rgba(0,0,0,0.8);
@@ -135,7 +143,6 @@ html, body {
 .winner .card-img { transform: scale(1.05); box-shadow: 0 10px 40px rgba(199, 0, 0, 0.4); outline: 3px solid #c70000; outline-offset: 4px; }
 .loser .card-img { transform: scale(0.95); opacity: 0.6; filter: grayscale(50%); }
 
-/* Make the Winner's button light up red! */
 .winner .win-percent {
   background: linear-gradient(135deg, #c70000, #ff4d4d);
   border: none;
@@ -156,13 +163,47 @@ html, body {
 
 @media (display-mode: standalone) { #install-app-btn { display: none !important; } }
 
-/* Mobile Layout */
+/* ---------------------------------
+   MOBILE LAYOUT FIXES
+--------------------------------- */
 @media (max-width: 768px) {
-  #app-wrapper { flex-direction: column; }
-  .split-side { padding-top: 35px; } 
-  .card-img { max-height: 28vh; }
-  .info-box { margin-top: 10px; padding: 10px; }
-  .card-set { font-size: 14px; }
-  .stats-box.reveal { height: 45px; padding-top: 10px; margin-top: 10px;}
-  .win-percent { font-size: 14px; padding: 8px; }
+  #app-wrapper { 
+    flex-direction: column; 
+    padding-top: 60px; /* Slightly shorter header offset for mobile */
+  }
+  
+  #main-header { height: 60px; } /* Shrink header to save vertical space */
+  .logo-img { max-height: 35px; } /* Shrink logo to match header */
+
+  .split-side { 
+    padding: 10px; /* Tighter padding on mobile edges */
+  } 
+  
+  .card-img { 
+    max-height: 22dvh; /* Force cards to scale down to fit info boxes and toolbars */
+  }
+  
+  .info-box { 
+    margin-top: 10px; 
+    padding: 10px; 
+  }
+  
+  .card-set { font-size: 13px; }
+  .card-number { font-size: 10px; }
+  
+  .stats-box { margin-top: 10px; padding-top: 10px; }
+  .stats-box.reveal { height: 35px; } /* Tighter button container */
+  
+  .win-percent { 
+    font-size: 13px; 
+    padding: 8px; 
+  }
+
+  #vs-badge {
+    width: 40px; 
+    height: 40px; 
+    font-size: 16px;
+    /* Keeps it from overlapping mobile content */
+    border-width: 2px;
+  }
 }
